@@ -1,11 +1,8 @@
 from django.conf import settings
 from django.forms.widgets import TextInput
-# from fundedbyme.shared.widgets import TextInput
 
 
 class S3ImageUploadFormWidget(TextInput):
-    # fbm_input_class = 'hidden'
-
     def __init__(self, *args, **kwargs):
         super(S3ImageUploadFormWidget, self).__init__(*args, **kwargs)
         self.attrs['data-s3-enabled'] = True

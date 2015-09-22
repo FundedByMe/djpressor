@@ -1,10 +1,9 @@
 from urlparse import urlparse
 from django import forms
-from fundedbyme.shared.utils.s3 import copy_object
+from django.conf import settings
+from .s3 import copy_object
 from .widgets import S3ImageUploadFormWidget
 from .models import S3ImageUploadModelField
-
-bucket_name = "media2.fundedbyme.com"
 
 
 class S3ImageUploadFormField(forms.CharField):
@@ -22,6 +21,14 @@ class S3ImageUploadFormField(forms.CharField):
 
 class ReplaceS3KeyNames(object):
     data = {}
+    bucket_name = getattr(
+        settings,
+        "DJPRESSOR_DESTINATION_BUCKET",
+        None
+    )
+
+    if not bucket_name:
+        raise Exception("DJPRESSOR_DESTINATION_BUCKET setting is not set.")
 
     def __init__(self, *args, **kwargs):
         self.data = kwargs
@@ -96,38 +103,6 @@ class ReplaceS3KeyNames(object):
                 len(new_original_path.split("/")) - 2:
             ][0]
 
-            # Uploaded S3 images values are returned as direct to the bucket
-            # Here we just change that to use our cname
-
-            # original_final_value = original_final_value.replace(
-            #     'https://s3-eu-west-1.amazonaws.com/media2.fundedbyme.com/',
-            #     'https://media2.fundedbyme.com/'
-            # )
-
-            # NOTE:
-
-            # The previous couple of lines are commented, meaning we'll save
-            # direct links to the keys on S3 bucket. This means that we're
-            # not serving them via CloudFlare CDN.
-
-            # Static/Media files are served via CloudFlare CDN, which uses
-            # a 'standard' caching policy; caches files on first hit.
-            # Technically the files shouldn't change unless purged
-            # but it seems like CloudFlare's behaviour is different everytime.
-            # Because of that, we'll just use the direct link to S3 so we don't
-            # have to deal with purging speicifc files via CloudFlare API
-            # (which is not that difficult, just an extra request).
-            # An example of how to purge the file in case we decide to do that
-            # later:
-            # pip install \
-            #        git+https://github.com/cloudflare-api/python-cloudflare.git
-            # cfapi = CloudFlare(email, api_key)
-            # cfapi.zone_file_purge(
-            #   'https://media2.fundedbyme.com',  # <-- Zone
-            #   'https://media2.fundedbyme.com/profiles/beshrkayali/profile_picture/thumbnail_square.jpg'
-            #     ^^^^ Actual file to purge
-            # )
-
             if original_final_value:
                 setattr(self.instance,
                         source_field_name,
@@ -151,4 +126,3 @@ class ModelAdminFormFieldsOverrider(object):
             )
         }
     }
-
