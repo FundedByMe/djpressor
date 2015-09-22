@@ -58,7 +58,7 @@ class ReplaceS3KeyNames(object):
                     ][0]
 
                     key_path = parsed.path.replace(
-                        '/{}/'.format(bucket_name),
+                        '/{}/'.format(self.bucket_name),
                         '')
 
                     # get rid of '_temp' in key filename
@@ -82,8 +82,10 @@ class ReplaceS3KeyNames(object):
                     # Replacing keyname actually entails copying the file over
                     # and replacing some of its metadata
                     copy_object(
-                        src_bucket_name=bucket_name, src_key_name=key_path,
-                        dst_bucket_name=bucket_name, dst_key_name=new_key_path,
+                        src_bucket_name=self.bucket_name,
+                        src_key_name=key_path,
+                        dst_bucket_name=self.bucket_name,
+                        dst_key_name=new_key_path,
                         preserve_acl=True
                     )
 
@@ -91,9 +93,9 @@ class ReplaceS3KeyNames(object):
         if original_path:
             new_original_path = original_path.replace('_temp', '')
             copy_object(
-                src_bucket_name=bucket_name,
+                src_bucket_name=self.bucket_name,
                 src_key_name=original_path,
-                dst_bucket_name=bucket_name,
+                dst_bucket_name=self.bucket_name,
                 dst_key_name=new_original_path,
                 preserve_acl=True
             )
@@ -116,13 +118,17 @@ class ModelAdminFormFieldsOverrider(object):
     """
     A simple mixin to override S3ImageUploadModelField for django admin models.
     """
-    formfield_overrides = {
-        S3ImageUploadModelField: {
-            'widget': S3ImageUploadFormWidget(
-                attrs={
-                    'data-enable-preview': 'false',
-                    'data-spec': 'partner_license_picture'
-                }
-            )
+    def __init__(self, *args, **kwargs):
+        super(ModelAdminFormFieldsOverrider, self).__init__(*args, **kwargs)
+
+        if not self.custom_s3_field_attrs:
+            raise Exception(
+                "custom_s3_field_attrs is not defined in ModelAdmin class")
+
+        self.formfield_overrides = {
+            S3ImageUploadModelField: {
+                'widget': S3ImageUploadFormWidget(
+                    attrs=self.custom_s3_field_attrs
+                )
+            }
         }
-    }
