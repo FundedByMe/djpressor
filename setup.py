@@ -1,7 +1,7 @@
 from pip.req import parse_requirements
 from setuptools import setup
 
-install_reqs = parse_requirements('requirements.txt', session=False)
+install_reqs = parse_requirements('requirements.txt')
 
 setup(
     name='djpressor',
