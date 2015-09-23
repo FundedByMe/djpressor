@@ -8,7 +8,7 @@
             // Main form.
             // This is a bit of an awkward way to load the form, but to avoid
             // setting new custom classes on forms alredy avaialble in the project
-            // we'll just use this way.
+            // we'll just do it this way.
             this.form = $('input[data-s3-enabled=True]').closest('form');
             this.formCanSubmit = true; // Initially, users can submit the form immediately
             this.submitButton = this.form.find(':submit');  // Submit button will be disabled while upload is taking place
@@ -17,16 +17,11 @@
 
             this.preview_class = 'image_field_preview';  // Class that'll be given to preview box attached right after the input field.
 
-            // Init an empty list for uploaded images. It'll get filled with links to uploaded imgs
-            // which will get POSTed back on form submit so filenames can be replaced.
-            // Eg.: original_temp.jpg => original.jpg
+            // Init an empty list for uploaded images.
 
-            this.uploaded = [
-            ];
+            this.uploaded = [];
 
             // Make sure specs are loaded.
-            // TODO: Make me better. It would be nice to load specs from inside
-            // this module itself.
             if (typeof(fbm_image_specs) === 'undefined') {
                 alert('Specs not loaded (or malformed). Image processing will fail.');
             };
@@ -85,20 +80,7 @@
 
             // Setup AWS Creds
             var creds = new AWS.CognitoIdentityCredentials({
-                // Identity Pool ID
-                // -- Both authorized and unauthorized users get to:
-                //    - Upload a file only to the specified bucket
-                //    - Set ACL, can be set to anything but has to be set to 'public-read' to ensure public access.
-                // TODO:
-                // For now this is okay, but it's a could be dangerous as
-                // unauthorized users can replace files.
-                // Implementing access only for authed users will require writing
-                // a AWS Cognito compatible auth backend to authorize only registered
-                // FBM users.
-                // ----
-                // Example here:
-                // http://docs.aws.amazon.com/cognito/devguide/identity/developer-authenticated-identities/
-                // ----
+                // AWS Cognito Identity Pool ID
                 IdentityPoolId: backend.aws_identity_pool,
             });
 
@@ -180,7 +162,7 @@
         // - Call impressor to do necessary cropping / resizing according to the spec set for the field
         // - Upload original image to S3
         // - Upload returned blobs from impressor to S3
-        // - All uploaded files get an additional `_temp` to their filenames
+        // - All uploaded files get an additional `_temp` to their filenames to avoid cornflakes
         newImageLoaded: function(e){
             var manager = this;
             var imageField = e.target;
@@ -207,34 +189,25 @@
                             '{field_name}', fieldName
                         );
 
-                        // Call impressor
-                        var blobs = manager.callImpressor(
-                            img, sizes
-                        );
+                        Impressor(img, sizes, function (returned) {
+                            // Upload original image first
+                            var original_temp_file_name = destination + 'original_temp.jpg';
 
-                        // Upload original image first
-                        // PS: Even though the original image might not be
-                        //     of type image/jpeg, we'll just give all
-                        //     originals' keys a .jpg extension to unify them
-                        //     the correct mimetype is copyed as is so it won't
-                        //     affect the image data on s3 nor its key.
-                        var original_temp_file_name = destination + 'original_temp.jpg';
-
-                        manager.uploadToS3(
-                            imageFile,
-                            imageFile.type,
-                            original_temp_file_name
-                        );
-
-                        // Upload generated blobs
-                        blobs.forEach(function(obj) {
-                            console.log(destination);
-                            var obj_temp_file_name = destination + obj.name + '_temp.jpg';
                             manager.uploadToS3(
-                                obj.blob,
-                                'image/jpeg',
-                                obj_temp_file_name
+                                imageFile,
+                                imageFile.type,
+                                original_temp_file_name
                             );
+
+                            returned.forEach(function(processedImg) {
+                                // upload generated blobs
+                                var obj_temp_file_name = destination + processedImg.name + '_temp.jpg';
+                                manager.uploadToS3(
+                                    processedImg.blob,
+                                    'image/jpeg',
+                                    obj_temp_file_name
+                                );
+                            })
                         });
                     }
 
@@ -261,11 +234,6 @@
             }
         },
 
-        // Calls `Impressor` library to do cropping and resizing
-        callImpressor: function(img, sizes){
-            return PS.Impressor.impress(img)(sizes)();
-        },
-
         // Function that uploads a single blob to S3 bucket destination
         uploadToS3: function(source, content_type, key_name){
             var manager = this;
@@ -282,11 +250,7 @@
             manager.submitButton.val('Loading...');
 
             this.aws_bucket.upload(params, function (err, data) {
-                // console.log(err ? 'ERROR!' : data.Location);
-
-
                 if (!err){
-                    console.log('Finished uploading: ' + data.Location)
                     manager.uploaded.push(data.Location);
                 };
 
