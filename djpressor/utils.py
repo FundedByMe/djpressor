@@ -27,7 +27,6 @@ class ImageDescriptor(object):
         Guesses the url of the image based on:
         - source field's value
         - source field's name
-        - for more information, consult ImageUpload.md
         """
 
         if instance is None:
