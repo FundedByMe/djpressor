@@ -5,7 +5,7 @@ install_reqs = parse_requirements('requirements.txt')
 
 setup(
     name='djpressor',
-    version='0.0.2',
+    version='0.0.3',
     author='FundedByMe',
     author_email='dev@fundedbyme.com',
     maintainer='FBM',
