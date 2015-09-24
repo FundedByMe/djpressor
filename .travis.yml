@@ -2,6 +2,7 @@ language: python
 services: sqlite
 
 install:
+    - pip install --upgrade pip
     - python djpressor/setup.py install
     - pip install -r requirements.txt
     - pip install -r tests/requirements.txt
