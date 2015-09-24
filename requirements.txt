@@ -1,2 +1,4 @@
 Django>=1.6.11,<=1.8
+requests
 boto
+
