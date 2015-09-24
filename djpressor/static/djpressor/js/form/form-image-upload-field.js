@@ -23,11 +23,11 @@
 
             // Make sure specs are loaded.
             if (typeof(fbm_image_specs) === 'undefined') {
-                alert('Specs not loaded (or malformed). Image processing will fail.');
+                throw new Error('Specs not loaded (or malformed). Image processing will fail.');
             };
 
             if (typeof(object_identifier) === 'undefined') {
-                alert('"object_identifier" not set. Image upload will fail.');
+                throw new Error('"object_identifier" not set. Image upload will fail.');
             };
 
         },
