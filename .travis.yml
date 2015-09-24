@@ -1,0 +1,9 @@
+language: python
+services: sqlite
+
+install:
+    - python setup.py install
+    - pip install -r requirements.txt
+    - pip install -r tests/requirements.txt
+
+script: py.test tests/
