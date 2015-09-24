@@ -4,7 +4,7 @@ from .utils import ImageDescriptor
 
 class S3ImageUploadModelField(models.URLField):
     def __init__(self, *args, **kwargs):
-        self.attrs = kwargs.pop('widget_attrs')
+        self.attrs = kwargs.pop('widget_attrs', None)
         super(S3ImageUploadModelField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
