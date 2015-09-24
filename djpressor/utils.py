@@ -11,6 +11,9 @@ class ImageFileObject(object):
     def __unicode__(self):
         return self.url
 
+    def __str__(self):
+        return self.__unicode__()
+
     def __repr__(self):
         return self.__unicode__()
 
@@ -67,9 +70,12 @@ class ImageDescriptor(object):
             # if `verify_exists` is True and url is not 200,
             # we return `default_empty`
             if getattr(instance.CustomImageFields, "verify_exists", None):
-                r = requests.get(url)
+                try:
+                    r = requests.get(url)
+                except requests.ConnectionError:
+                    does_not_exist = True
 
-                if r.status_code != 200:
+                if does_not_exist or r.status_code != 200:
                     self.imagefile.url = getattr(
                         instance.CustomImageFields,
                         "default_empty", "")
