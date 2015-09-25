@@ -5,7 +5,7 @@ from django.forms.widgets import TextInput
 class S3ImageUploadFormWidget(TextInput):
     def __init__(self, *args, **kwargs):
         super(S3ImageUploadFormWidget, self).__init__(*args, **kwargs)
-        self.attrs['data-s3-enabled'] = True
+        self.attrs['data-s3-enabled'] = 'enabled'
         style = self.attrs.get('style', '')
         self.attrs['style'] = "display: none;" + style
 

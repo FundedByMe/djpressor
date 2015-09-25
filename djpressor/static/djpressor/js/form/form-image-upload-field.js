@@ -9,7 +9,7 @@
             // This is a bit of an awkward way to load the form, but to avoid
             // setting new custom classes on forms alredy avaialble in the project
             // we'll just do it this way.
-            this.form = $('input[data-s3-enabled=True]').closest('form');
+            this.form = $('input[data-s3-enabled="enabled"]').closest('form');
             this.formCanSubmit = true; // Initially, users can submit the form immediately
             this.submitButton = this.form.find(':submit');  // Submit button will be disabled while upload is taking place
 
@@ -34,10 +34,8 @@
 
         initFileInputFields: function(){
             var manager = this;
-
-            $.each(this.form.find('input[data-s3-enabled=True]'), function(){
+            $.each(this.form.find('input[data-s3-enabled="enabled"]'), function(){
                 var $orig_elem = $(this);
-
                 // Create fake file input orig_elem
                 var $file_elem = $('<input />').attr('type', 'file')
                     .attr('id', $orig_elem.attr('id'))
