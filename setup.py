@@ -1,7 +1,8 @@
 from pip.req import parse_requirements
 from setuptools import setup
+import uuid
 
-install_reqs = parse_requirements('requirements.txt')
+install_reqs = parse_requirements('requirements.txt', session=uuid.uuid1())
 
 setup(
     name='djpressor',
