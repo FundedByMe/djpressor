@@ -7,7 +7,7 @@ from djpressor.models import (S3ImageUploadModelField,
 class SimpleModel(models.Model):
     image = S3ImageUploadModelField(
         widget_attrs={
-            'data-enable-preview': 'false',
+            'data-enable-preview': 'true',
             'data-spec': 'some_spec'
         }
     )

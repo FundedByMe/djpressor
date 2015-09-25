@@ -4,6 +4,9 @@ from .models import SimpleModel
 from djpressor.forms import ReplaceS3KeyNames
 
 
-class ProfileSettingsForm(ReplaceS3KeyNames, forms.ModelForm):
+class SimpleModelForm(ReplaceS3KeyNames, forms.ModelForm):
     class Meta:
         model = SimpleModel
+        fields = [
+            'image'
+        ]

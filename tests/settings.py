@@ -2,7 +2,7 @@ from django.conf.global_settings import *
 import os
 
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 TIME_ZONE = 'UTC'
@@ -18,7 +18,7 @@ ROOT_URLCONF = 'tests.urls'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
+        'NAME': 'x.sql',  # :memory:
     }
 }
 
@@ -41,6 +41,9 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.messages.context_processors.messages'
 ]
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.dirname(os.path.realpath(__file__))
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -61,6 +64,8 @@ INSTALLED_APPS = (
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
+
+ALLOWED_HOSTS = ['*']
 
 # djpressor
 DEFAULT_EMPTY = "http://media.example.com/image.jpg"

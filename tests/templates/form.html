@@ -1,0 +1,24 @@
+<html>
+<head><title>test djpressor</title></head>
+<body>
+
+<form method="POST">
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+        <label>{{field.label}}: </label>
+        {{field}}
+    {% endfor %}
+</form>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+
+<script type="text/javascript">
+    var object_identifier = "demo"
+</script>
+
+{{form.media}}
+</body>
+</html>
