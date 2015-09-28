@@ -3,4 +3,4 @@
 *.dump
 *.db
 *.egg-info
-
+ghostdriver.log
