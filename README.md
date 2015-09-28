@@ -1,6 +1,8 @@
 # djpressor
 
-Using Impressor [![npm version](https://badge.fury.io/js/impressor.svg)](http://badge.fury.io/js/impressor)
+Using Impressor
+
+[![npm version](https://badge.fury.io/js/impressor.svg)](http://badge.fury.io/js/impressor)
 
 ### Tests
 
