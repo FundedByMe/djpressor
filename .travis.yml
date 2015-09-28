@@ -14,6 +14,5 @@ install:
     - pip install --upgrade pip
     - python setup.py install
     - pip install -r tests/requirements.txt
-    - python tests/manage.py collectstatic --noinput
 
 script: py.test tests/
