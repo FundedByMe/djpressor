@@ -1,5 +1,7 @@
 # djpressor
 
+Using Impressor [![npm version](https://badge.fury.io/js/impressor.svg)](http://badge.fury.io/js/impressor)
+
 ### Tests
 
 <a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a>
