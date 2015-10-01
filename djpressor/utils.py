@@ -1,3 +1,4 @@
+import django
 import requests
 from django import forms
 from urlparse import urlparse
@@ -93,6 +94,8 @@ class GenericMixedinModelFormGenerator():
         class TheForm(ReplaceS3KeyNames, forms.ModelForm):
             class Meta:
                 model = model_class
+                if django.VERSION >= (1, 6):
+                    fields = '__all__'
 
         self._class = TheForm
 
