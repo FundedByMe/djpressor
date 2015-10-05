@@ -1,17 +1,15 @@
-# djpressor <a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a>
+# djpressor
 
-[![codecov.io](http://codecov.io/github/FundedByMe/djpressor/coverage.svg?branch=master)](http://codecov.io/github/FundedByMe/djpressor?branch=master)
+[![codecov.io](http://codecov.io/github/FundedByMe/djpressor/coverage.svg?branch=master)](http://codecov.io/github/FundedByMe/djpressor?branch=master) <a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a> [![Sauce Test Status](https://saucelabs.com/buildstatus/fundedbyme)](https://saucelabs.com/u/fundedbyme)
 
-### Tests
+### Tests Breakdown
+
+##### Browsers
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/fundedbyme.svg)](https://saucelabs.com/u/fundedbyme)
+
+##### Coverage over Time
 
 ![codecov.io](http://codecov.io/github/FundedByMe/djpressor/branch.svg?branch=master)
-
-
-<a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a>
-
-[![Sauce Test Status](https://saucelabs.com/buildstatus/fundedbyme)](https://saucelabs.com/u/fundedbyme)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/fundedbyme.svg)](https://saucelabs.com/u/fundedbyme)
 
 ### Running tests
 
