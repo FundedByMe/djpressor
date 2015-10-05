@@ -1,12 +1,9 @@
-# djpressor
+# djpressor <a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a>
 
-Using Impressor
-
-[![npm version](https://badge.fury.io/js/impressor.svg)](http://badge.fury.io/js/impressor)
+Coverage [![codecov.io](http://codecov.io/github/FundedByMe/djpressor/coverage.svg?branch=master)](http://codecov.io/github/FundedByMe/djpressor?branch=master)
 
 ### Tests
 
-<a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a>
 [![Sauce Test Status](https://saucelabs.com/buildstatus/fundedbyme)](https://saucelabs.com/u/fundedbyme)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/fundedbyme.svg)](https://saucelabs.com/u/fundedbyme)
@@ -36,3 +33,5 @@ else:
     from sauceclient import SauceClient
     # ...
 ```
+
+Using Impressor [![npm version](https://badge.fury.io/js/impressor.svg)](http://badge.fury.io/js/impressor)
