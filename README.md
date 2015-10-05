@@ -7,7 +7,7 @@
 ![codecov.io](http://codecov.io/github/FundedByMe/djpressor/branch.svg?branch=master)
 
 
-<a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpr    essor.svg?branch=master"/></a>
+<a href="https://travis-ci.org/FundedByMe/djpressor"><img src="https://travis-ci.org/FundedByMe/djpressor.svg?branch=master"/></a>
 
 [![Sauce Test Status](https://saucelabs.com/buildstatus/fundedbyme)](https://saucelabs.com/u/fundedbyme)
 
