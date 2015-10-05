@@ -19,4 +19,4 @@ install:
     - python setup.py install
     - pip install -r tests/requirements.txt
 
-script: coverage py.test tests/
+script: py.test --cov=djpressor/ --cov-config=.coveragerc

@@ -1,5 +1,6 @@
 -r ../requirements.txt
 pytest
+pytest-cov
 pytest-django
 PyVirtualDisplay==0.1.5
 sauceclient==0.1.0
