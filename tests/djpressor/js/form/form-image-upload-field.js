@@ -2,7 +2,6 @@
 (function(){
     var imageFieldManager = {
         init: function(){
-
             // Vars
 
             // Main form.
@@ -122,9 +121,9 @@
                     "original.jpg"
                 );
 
-                $(manager.form.find('input[data-s3-enabled=True]')).val('');
+                $(manager.form.find('input[data-s3-enabled="enabled"]')).val('');
 
-                var field_id = $(manager.form.find('input[data-s3-enabled=True]')).attr('id');
+                var field_id = $(manager.form.find('input[data-s3-enabled="enabled"]')).attr('id');
                 $('#original-' + field_id).val(original_image_url);
                 // Submit
                 return true;
@@ -141,7 +140,7 @@
             var manager=this;
 
             // Bind file input fileds change event to preview image before upload.
-            this.form.find('input[data-s3-enabled=True]').on(
+            this.form.find('input[data-s3-enabled="enabled"]').on(
                 'change',
                 $.proxy(manager.newImageLoaded, this)
             );
