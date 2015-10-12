@@ -6,7 +6,7 @@ install_reqs = parse_requirements('requirements.txt', session=PipSession())
 
 setup(
     name='djpressor',
-    version='0.0.5',
+    version='0.0.6',
     author='FundedByMe',
     author_email='dev@fundedbyme.com',
     maintainer='FBM',
