@@ -71,6 +71,7 @@ class ImageDescriptor(object):
             # if `verify_exists` is True and url is not 200,
             # we return `default_empty`
             if getattr(instance.CustomImageFields, "verify_exists", None):
+                does_not_exist = False
                 try:
                     r = requests.get(url)
                 except requests.ConnectionError:
