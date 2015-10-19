@@ -1,5 +1,6 @@
 from django.conf import settings
 from boto.s3.connection import S3Connection
+import time
 
 
 def get_s3_connection():
@@ -46,5 +47,14 @@ def copy_object(src_bucket_name,
     key = bucket.lookup(src_key_name)
 
     # Copy the key back on to itself, with new metadata
-    return key.copy(dst_bucket_name, dst_key_name,
-                    metadata=metadata, preserve_acl=preserve_acl)
+    if not key:
+        # Sleep for half a second, sometimes it takes time for S3
+        # keys to register that they exist
+        time.sleep(0.5)
+        key = bucket.lookup(src_key_name)
+
+    if key:
+        return key.copy(dst_bucket_name, dst_key_name,
+                        metadata=metadata, preserve_acl=preserve_acl)
+
+    return None
