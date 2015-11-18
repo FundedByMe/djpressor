@@ -1,6 +1,37 @@
 from django.conf import settings
 from boto.s3.connection import S3Connection
+from boto.https_connection import CertValidatingHTTPSConnection
+import socket
+import ssl
+import re
 import time
+
+
+class TestHttpConntection(CertValidatingHTTPSConnection):
+    # !! Unsafe on Python < 2.7.9
+    def __init__(self, *args, **kwargs):
+        # No super, it's an old-style class
+        CertValidatingHTTPSConnection.__init__(self, *args, **kwargs)
+
+        # Defaults to cert validation
+        self.ssl_ctx = ssl.create_default_context(cafile=self.ca_certs)
+        if self.cert_file is not None:
+            self.ssl_ctx.load_cert_chain(certfile=self.cert_file,
+                                         keyfile=self.key_file)
+
+    def connect(self):
+        "Connect to a host on a given (SSL) port."
+        if hasattr(self, "timeout"):
+            sock = socket.create_connection(
+                (self.host, self.port), self.timeout)
+        else:
+            sock = socket.create_connection(
+                (self.host, self.port))
+
+        if re.match(".*\.s3.*\.amazonaws\.com", self.host):
+            patched_host = ".".join(self.host.rsplit(".", 4)[1:])
+        self.sock = self.ssl_ctx.wrap_socket(
+            sock, server_hostname=patched_host)
 
 
 def get_s3_connection():
@@ -11,6 +42,7 @@ def get_s3_connection():
         'aws_access_key_id': settings.AWS_ACCESS_KEY_ID,
         'aws_secret_access_key': settings.AWS_SECRET_ACCESS_KEY,
         'is_secure': True,
+        'https_connection_factory': (TestHttpConntection, ())
     }
     if hasattr(settings, 'AWS_S3_PROXY_HOST'):
         connection_kwargs['proxy'] = settings.AWS_S3_PROXY_HOST
