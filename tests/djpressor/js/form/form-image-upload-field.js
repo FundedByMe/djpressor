@@ -213,9 +213,7 @@
                     if (previewEnabled){
                         var preview_img = $(img).css({'width': '100px',
                                                       'float': 'right',
-                                                      'marginTop': '-100px',
-                                                      'border':'solid 1px #ccc',
-                                                      'borderRadius': '4px'});
+                                                      'marginTop': '-25px'});
 
                         $(preview_img).addClass(manager.preview_class);
 
