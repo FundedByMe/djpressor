@@ -5,6 +5,7 @@ import socket
 import ssl
 import re
 import time
+import sys
 
 
 class TestHttpConntection(CertValidatingHTTPSConnection):
@@ -42,8 +43,14 @@ def get_s3_connection():
         'aws_access_key_id': settings.AWS_ACCESS_KEY_ID,
         'aws_secret_access_key': settings.AWS_SECRET_ACCESS_KEY,
         'is_secure': True,
-        'https_connection_factory': (TestHttpConntection, ())
     }
+
+    v = sys.version_info
+
+    if v.micro >= 9 and v.major == 2 and v.minor == 7:
+        connection_kwargs[
+            'https_connection_factory'] = (TestHttpConntection, ())
+
     if hasattr(settings, 'AWS_S3_PROXY_HOST'):
         connection_kwargs['proxy'] = settings.AWS_S3_PROXY_HOST
     if hasattr(settings, 'AWS_S3_PROXY_PORT'):
