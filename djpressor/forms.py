@@ -42,10 +42,11 @@ class ReplaceS3KeyNames(object):
             raise Exception("CustomImageFields class with fields list is not "
                             "defined for model.")
 
-        original_path = None
-        original_final_value = None
-
         for field_name in fields:
+            hasnt_been_done_yet = True
+            original_path = None
+            original_final_value = None
+
             url = self.data.get(field_name)
 
             if url:
@@ -89,26 +90,28 @@ class ReplaceS3KeyNames(object):
                         preserve_acl=True
                     )
 
-        # Do the same for the original image
-        if original_path:
-            new_original_path = original_path.replace('_temp', '')
-            copy_object(
-                src_bucket_name=self.bucket_name,
-                src_key_name=original_path,
-                dst_bucket_name=self.bucket_name,
-                dst_key_name=new_original_path,
-                preserve_acl=True
-            )
+            # Do the same for the original image
+            if original_path and hasnt_been_done_yet:
+                new_original_path = original_path.replace('_temp', '')
+                copy_object(
+                    src_bucket_name=self.bucket_name,
+                    src_key_name=original_path,
+                    dst_bucket_name=self.bucket_name,
+                    dst_key_name=new_original_path,
+                    preserve_acl=True
+                )
 
-            # Set value of source field for additional special image fields
-            source_field_name = new_original_path.split("/")[
-                len(new_original_path.split("/")) - 2:
-            ][0]
+                # Set value of source field for additional special image fields
+                source_field_name = new_original_path.split("/")[
+                    len(new_original_path.split("/")) - 2:
+                ][0]
 
-            if original_final_value:
-                setattr(self.instance,
-                        source_field_name,
-                        original_final_value.replace('_temp', ''))
+                if original_final_value:
+                    setattr(self.instance,
+                            source_field_name,
+                            original_final_value.replace('_temp', ''))
+
+                hasnt_been_done_yet = False
 
         __save__ = super(ReplaceS3KeyNames, self).save(*args, **kwargs)
         return __save__
