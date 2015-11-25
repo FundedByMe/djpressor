@@ -15,6 +15,9 @@
             this.original_submit_val = this.submitButton.val();
 
             this.preview_class = 'image_field_preview';  // Class that'll be given to preview box attached right after the input field.
+            this.preview_box_style = {'width': '100px',
+                                      'float': 'right',
+                                      'marginTop': '-25px'}
 
             // Init an empty list for uploaded images.
 
@@ -33,10 +36,12 @@
 
         initFileInputFields: function(){
             var manager = this;
+
             $.each(this.form.find('input[data-s3-enabled="enabled"]'), function(){
                 var $orig_elem = $(this);
                 // Create fake file input orig_elem
-                var $file_elem = $('<input />').attr('type', 'file')
+                var $file_elem = $('<input />')
+                    .attr('type', 'file')
                     .attr('id', $orig_elem.attr('id'))
                     .attr('value', '')
 
@@ -54,6 +59,24 @@
                     }
                 });
 
+                // Load up preview box
+                if (attrs.hasOwnProperty('value')){
+                    $file_elem.css({'width': '95px'});
+
+                    // if preview is enabled on field, load up the preview
+
+                    if($orig_elem.data('enable-preview')){
+
+                        var img = new Image;
+                        img.src = attrs['value'].value;
+
+                        var preview_img = $(img).css(manager.preview_box_style);
+                        $(preview_img).addClass(manager.preview_class);
+                        
+                        $(preview_img).addClass('preview-for-' + $file_elem.attr('id'));
+                    };
+                }
+
                 // Remove them from original element so jquery doesn't get confused.
                 $.each(attrsToRemove, function() {
                     $orig_elem.removeAttr(this);
@@ -61,6 +84,14 @@
 
                 // Add file_elem in the orig_elem's place (or actually, right after)
                 $('#' + $(this).attr('id')).after($file_elem);
+
+                if (attrs.hasOwnProperty('value')){
+                    if($orig_elem.data('enable-preview')){
+                        // Remove prev preview imgs if any and add the new one
+                        $('.' + manager.preview_class + '.preview-for-' + $file_elem.attr('id')).remove();
+                        $file_elem.after(preview_img);
+                    }
+                }
 
                 // CSS hack to make our special FBM form field container label not show up abover the input
                 $('#' + $(this).attr('id')).parent('.formField').addClass('is-floating')
@@ -211,9 +242,7 @@
                     img.src = image_b64;
 
                     if (previewEnabled){
-                        var preview_img = $(img).css({'width': '100px',
-                                                      'float': 'right',
-                                                      'marginTop': '-25px'});
+                        var preview_img = $(img).css(manager.preview_box_style);
 
                         $(preview_img).addClass(manager.preview_class);
 
