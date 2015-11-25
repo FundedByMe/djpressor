@@ -8,7 +8,7 @@ import time
 import sys
 
 
-class TestHttpConntection(CertValidatingHTTPSConnection):
+class UnsafeHttpsConntection(CertValidatingHTTPSConnection):
     # !! Unsafe on Python < 2.7.9
     def __init__(self, *args, **kwargs):
         # No super, it's an old-style class
@@ -49,7 +49,7 @@ def get_s3_connection():
 
     if v.micro >= 9 and v.major == 2 and v.minor == 7:
         connection_kwargs[
-            'https_connection_factory'] = (TestHttpConntection, ())
+            'https_connection_factory'] = (UnsafeHttpsConntection, ())
 
     if hasattr(settings, 'AWS_S3_PROXY_HOST'):
         connection_kwargs['proxy'] = settings.AWS_S3_PROXY_HOST
