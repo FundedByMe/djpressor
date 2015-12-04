@@ -39,50 +39,52 @@ class ImageDescriptor(object):
             source = getattr(instance, self.source_field_name)
 
             # Parse original image url
-            parsed = urlparse(source)
+            if source:
+                parsed = urlparse(source)
 
-            if not parsed.netloc or not parsed.path:
-                # if source field doesn't have a url in it
-                # we'll just return an empty ImageFileObject
+                if not parsed.netloc or not parsed.path:
+                    # if source field doesn't have a url in it
+                    # we'll just return an empty ImageFileObject
+                    return self.imagefile
+
+                # get original image filename
+                filename = parsed.path.split("/")[
+                    len(parsed.path.split("/")) - 1:
+                ][0]
+
+                filename_no_ext = filename.split('.')[0]
+
+                path = parsed.path.replace(
+                    filename_no_ext,  # original file
+                    self.attname      # fieldname.ext == filename.ext
+                )
+
+                # new url
+                url = "{0}://{1}{2}".format(
+                    parsed.scheme,
+                    parsed.netloc,
+                    path
+                )
+
+                self.imagefile.url = url
+                self.imagefile.path = path
+
+                # if `verify_exists` is True and url is not 200,
+                # we return `default_empty`
+                if getattr(instance.CustomImageFields, "verify_exists", None):
+                    does_not_exist = False
+                    try:
+                        r = requests.get(url)
+                    except requests.ConnectionError:
+                        does_not_exist = True
+
+                    if does_not_exist or r.status_code != 200:
+                        self.imagefile.url = getattr(
+                            instance.CustomImageFields,
+                            "default_empty", "")
+
                 return self.imagefile
-
-            # get original image filename
-            filename = parsed.path.split("/")[
-                len(parsed.path.split("/")) - 1:
-            ][0]
-
-            filename_no_ext = filename.split('.')[0]
-
-            path = parsed.path.replace(
-                filename_no_ext,  # original file
-                self.attname      # fieldname.ext == filename.ext
-            )
-
-            # new url
-            url = "{0}://{1}{2}".format(
-                parsed.scheme,
-                parsed.netloc,
-                path
-            )
-
-            self.imagefile.url = url
-            self.imagefile.path = path
-
-            # if `verify_exists` is True and url is not 200,
-            # we return `default_empty`
-            if getattr(instance.CustomImageFields, "verify_exists", None):
-                does_not_exist = False
-                try:
-                    r = requests.get(url)
-                except requests.ConnectionError:
-                    does_not_exist = True
-
-                if does_not_exist or r.status_code != 200:
-                    self.imagefile.url = getattr(
-                        instance.CustomImageFields,
-                        "default_empty", "")
-
-            return self.imagefile
+            return
 
     def __set__(self, instance, value):
         instance.__dict__[self.attname] = value
