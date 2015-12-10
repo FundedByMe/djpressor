@@ -10,7 +10,7 @@
             // we'll just do it this way.
             this.form = $('input[data-s3-enabled="enabled"]').closest('form');
             this.formCanSubmit = true; // Initially, users can submit the form immediately
-            this.submitButton = this.form.find(':submit');  // Submit button will be disabled while upload is taking place
+            this.submitButton = this.form.find(':submit:first');  // Submit button will be disabled while upload is taking place
 
             this.original_submit_val = this.submitButton.val();
 
@@ -93,7 +93,7 @@
                     }
                 }
 
-                // CSS hack to make our special FBM form field container label not show up abover the input
+                // CSS hack to make our special FBM form field container label not show up above the input
                 $('#' + $(this).attr('id')).parent('.formField').addClass('is-floating')
             });
         },
