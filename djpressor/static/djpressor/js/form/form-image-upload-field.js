@@ -16,8 +16,9 @@
 
             this.preview_class = 'image_field_preview';  // Class that'll be given to preview box attached right after the input field.
             this.preview_box_style = {'width': '100px',
-                                      'float': 'right',
-                                      'marginTop': '-25px'}
+                                      'position': 'absolute',
+                                      'right': '0px',
+                                      'top': '0px'}
 
             // Init an empty list for uploaded images.
 
@@ -95,6 +96,23 @@
 
                 // CSS hack to make our special FBM form field container label not show up above the input
                 $('#' + $(this).attr('id')).parent('.formField').addClass('is-floating')
+
+                // Add clear image button
+                console.log($orig_elem.attr('id'));
+                var reset_image_func = function(e){
+                    e.preventDefault();
+                    $orig_elem.attr('value', '');
+                    console.log('Val reset!');
+                }
+
+                var $reset_image_link = $('<a>')
+                    .css({'display': 'block'})
+                    .attr('href', 'javascript:;').text('Clear');
+
+                $reset_image_link.bind('click', reset_image_func);
+                $file_elem.after($reset_image_link);
+
+                // TODO: Make initFileInputFields nicer!
             });
         },
 
