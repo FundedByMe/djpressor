@@ -98,11 +98,9 @@
                 $('#' + $(this).attr('id')).parent('.formField').addClass('is-floating')
 
                 // Add clear image button
-                console.log($orig_elem.attr('id'));
                 var reset_image_func = function(e){
                     e.preventDefault();
                     $orig_elem.attr('value', '');
-                    console.log('Val reset!');
                 }
 
                 var $reset_image_link = $('<a>')
