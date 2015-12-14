@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.forms.widgets import TextInput
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 
 class S3ImageUploadFormWidget(TextInput):
@@ -12,9 +13,9 @@ class S3ImageUploadFormWidget(TextInput):
     class Media:
         js = (
             'https://sdk.amazonaws.com/js/aws-sdk-2.1.48.min.js',
-            'djpressor/js/impressor/impressor.js',
-            getattr(settings,
-                    'SPEC_JS_FILE_LOCATION',
-                    'js/impressor/specs.js'),
-            'djpressor/js/form/form-image-upload-field.js',
+            static('djpressor/js/impressor/impressor.js'),
+            static(getattr(settings,
+                           'SPEC_JS_FILE_LOCATION',
+                           'js/impressor/specs.js')),
+            static('djpressor/js/form/form-image-upload-field.js'),
         )
