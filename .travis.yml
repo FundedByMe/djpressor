@@ -12,7 +12,7 @@ addons:
 before_install:
   - pip install codecov
   - pip install -r requirements.txt
-  - python tests/manage.py collectstatic
+  - python tests/manage.py collectstatic --noinput
 
 after_success:
   - codecov
