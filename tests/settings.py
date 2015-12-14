@@ -1,6 +1,8 @@
 from django.conf.global_settings import *
 import os
+import sys
 
+sys.path.append('../../djpressor')
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
