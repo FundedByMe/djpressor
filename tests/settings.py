@@ -1,8 +1,14 @@
 from django.conf.global_settings import *
 import os
 import sys
+from os.path import dirname, realpath, join
 
-sys.path.append('../../djpressor')
+sys.path.append(
+    realpath(join(
+        realpath(join(dirname(__file__), '..')),
+        '../djpressor')
+    )
+)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
