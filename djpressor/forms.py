@@ -117,8 +117,6 @@ class ReplaceS3KeyNames(object):
                     ''
                 )
 
-                print "Now Setting: ", source_field_name
-
                 if original_final_value:
                     setattr(self.instance,
                             source_field_name,
