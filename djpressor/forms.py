@@ -42,6 +42,8 @@ class ReplaceS3KeyNames(object):
             raise Exception("CustomImageFields class with fields list is not "
                             "defined for model.")
 
+        form_prefix = self.prefix if hasattr(self, 'prefix') and self.prefix != None else ''
+
         for field_name in fields:
             hasnt_been_done_yet = True
             original_path = None
@@ -105,6 +107,15 @@ class ReplaceS3KeyNames(object):
                 source_field_name = new_original_path.split("/")[
                     len(new_original_path.split("/")) - 2:
                 ][0]
+
+                # If Form has a prefix, then we need to remove it from
+                # source_field_name value to make sure we're updating the
+                # correct field
+
+                source_field_name = source_field_name.replace(
+                    '%s-' % form_prefix,
+                    ''
+                )
 
                 if original_final_value:
                     setattr(self.instance,
