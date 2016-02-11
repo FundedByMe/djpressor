@@ -105,7 +105,7 @@
 
                 var $reset_image_link = $('<a>')
                     .css({'display': 'block'})
-                    .attr('href', 'javascript:;').text('Clear');
+                    .attr('href', 'javascript:;').text('Remove file');
 
                 $reset_image_link.bind('click', reset_image_func);
                 $file_elem.after($reset_image_link);
