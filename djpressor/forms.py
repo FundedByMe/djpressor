@@ -23,9 +23,8 @@ class ReplaceS3KeyNames(object):
     data = {}
     bucket_name = getattr(
         settings,
-        "DJPRESSOR_DESTINATION_BUCKET",
-        None
-    )
+        "AWS_COGNITO_IDENTITIES"
+    ).get('djpressor').get('destination_bucket')
 
     if not bucket_name:
         raise Exception("DJPRESSOR_DESTINATION_BUCKET setting is not set.")
