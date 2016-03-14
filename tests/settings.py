@@ -78,3 +78,12 @@ ALLOWED_HOSTS = ['*']
 # djpressor
 DEFAULT_EMPTY = "http://media.example.com/image.jpg"
 DJPRESSOR_DESTINATION_BUCKET = "some_bucket_name"
+
+AWS_COGNITO_IDENTITIES = {
+    'djpressor': {
+        'region': 'eu-west-1',
+        'identity_pool_id': 'eu-west-1:xxxxx-1234-1234-1234-yyyyyyyyyy',
+        'developer_identity_name': 'login.example.something',
+        'destination_bucket': 'theirbucket.example.com'
+    }
+}
