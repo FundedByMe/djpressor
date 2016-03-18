@@ -33,6 +33,10 @@
                 throw new Error('"object_identifier" not set. Image upload will fail.');
             };
 
+            if (typeof(user_api_auth_token) === 'undefined') {
+                throw new Error('"user_api_auth_token" not set. Image upload will fail.');
+            };
+
         },
 
         initFileInputFields: function(){
@@ -114,7 +118,14 @@
             });
         },
 
+        getCookie: function getCookie(name) {
+          var match = document.cookie.match(new RegExp(name + '=([^;]+)'));
+          var cookie = match ? match[1] : null;
+          return cookie;
+        },
+
         setupAWSBackend: function(){
+            var manager = this;
 
             // Temp way to load backend. TODO: Make me better.
             var backend = fbm_image_specs['default_backend'];
@@ -122,19 +133,48 @@
             this.bucket_name = backend.aws_s3_bucket;
             this.region = backend.aws_region;
 
-            // Setup AWS Creds
-            var creds = new AWS.CognitoIdentityCredentials({
-                // AWS Cognito Identity Pool ID
-                IdentityPoolId: backend.aws_identity_pool,
-            });
+            // URL to get Cognito OpenID Token            
+            var auth_url = '/auth/aws/djpressor/';
 
-            // Configure AWS credential
-            AWS.config.credentials = creds;
+            var auth_headers = {
+              Authorization: 'Token ' + user_api_auth_token,
+            };
 
-            // Configure region
-            AWS.config.region = this.region;
+            // 1- Get Cognito OpenID token + Cognito Identity ID for user
+            // 2- Get Cognito identity creds
+            // 3- Set those creds to AWS client creds config.
+            // 4- Set aws_bucket
+            $.ajax({
+                url: auth_url,
+                dataType : 'json',
+                headers: auth_headers,
+                success: function(creds){
 
-            this.aws_bucket = new AWS.S3({params: {Bucket: this.bucket_name}});
+                    var aws_creds_r_params = {
+                        // AWS Cognito Identity Pool ID
+                        IdentityPoolId: backend.aws_identity_pool,
+                        IdentityId: creds.IdentityId,
+                        RoleSessionName: 'web',
+                        Logins: {
+                            'cognito-identity.amazonaws.com': creds.Token
+                        }
+                    };
+
+                    // Setup AWS Creds
+                    var aws_creds = new AWS.CognitoIdentityCredentials(aws_creds_r_params);
+
+                    // Configure AWS credential
+                    AWS.config.credentials = aws_creds;
+
+                    // Configure region
+                    AWS.config.region = manager.region;
+
+                    manager.aws_bucket = new AWS.S3({params: {Bucket: manager.bucket_name}});
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    console.log('error returned from ' + url);
+                }
+            })
         },
 
         // Uploads images to S3 destination before main form submit
