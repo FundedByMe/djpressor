@@ -49,9 +49,6 @@ var djpressor = function () {
       REMOVE: 'Remove',
       PREVIEW_ALT: 'Image preview',
       UPLOADING: 'Uploading...',
-    },
-    PATHS = {
-      DEFAULT_IMG: '/static/images/svg/icon/flat/bw/images.svg',
     };
 
   /**
@@ -89,6 +86,7 @@ var djpressor = function () {
       /**
        * Verify the image sizes specification is available (specs.js)
        */
+      //TODO add check for the AWSB object
       if (fbm_image_specs == undefined || object_identifier == undefined || user_api_auth_token == undefined) {
         console.log('Djpressor: Image specifications not available. Djpressor execution aborted.');
         return false;
@@ -167,6 +165,9 @@ var djpressor = function () {
        * Create html elements for the upload module and
        * add them to the DOM
        */
+      // Checking for .formField container to find out whether it is client site or admin site.
+      // Admin site does not have .formField containers.
+      // TODO check with backend guys whether we can have isAdminSite flag
       if ($originalFormField.length > 0) {
         /**
          * For client website
@@ -199,9 +200,6 @@ var djpressor = function () {
             alt: TEXTS.PREVIEW_ALT
           });
 
-        // Save module el to 'this'
-        this.$moduleEl = $moduleEl;
-
         // Update server-generated form controls
         $originalFormField.css('border', 'none');
         $originalLabel.css('display', 'none');
@@ -232,6 +230,7 @@ var djpressor = function () {
          */
         $input.css('display', 'none');
 
+        //TODO move html generation to a separate method
         var $uploadInputEl = $('<input />', {
             type: 'file',
             'class': DJP_CLASSNAMES.FILE_INPUT
@@ -281,6 +280,8 @@ var djpressor = function () {
       //Update the existing preview
       $currentPreviewEl.attr('src', imageUrl);
 
+      // Settings styles instead of classes because
+      // admin site lacks client site classes.
       if (imageUrl === '') {
         $currentPreviewEl.css('display', 'none');
         $removeEl.css('visibility', 'hidden');
@@ -412,13 +413,12 @@ var djpressor = function () {
         return false;
       } else if (manager.uploaded.length > 0) {
 
-        //TODO when no changes were made this code is useless, ie this.uploaded equals []
-        //TODO does this mean the djp uploads all images uploaded by user instead of uploading the last one???
         manager.uploaded.forEach(function (tempImgUrl) {
 
           // Remove '_temp' suffix from image file name in URL
           var newImgUrl = tempImgUrl.replace(/_temp/g, ''),
             // Get image size name from file name
+            // TODO get sizedata from S3 data
             sizeName = /[\w. ]+$/.exec(newImgUrl)[0].replace(/\.jpg/g, '');
 
           // TODO Why?
@@ -499,6 +499,7 @@ var djpressor = function () {
               // Upload original image first
               var original_temp_file_name = destination + 'original_temp.jpg';
 
+              //TODO Update script to save images only on SUBMIT event instead of upload
               manager.uploadToS3(
                 imageFile,
                 imageFile.type,
