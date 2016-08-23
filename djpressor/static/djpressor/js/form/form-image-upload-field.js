@@ -125,7 +125,7 @@ var djpressor = function () {
        * Flag that indicates whether the image upload is being processed
        * @type {Boolean}
        */
-      this.isUploadInProgress = false;
+      this.canSubmitForm = true;
 
       /**
        * Collection of URL addresses to the uploaded image in different sizes
@@ -381,9 +381,10 @@ var djpressor = function () {
       };
 
       // disable form submission until stuff get uploaded
-      manager.isUploadInProgress = true;
+      manager.canSubmitForm = false;
 
-      manager.$submit.attr('disabled', 'true').val(TEXTS.UPLOADING);
+      // Disable form submit btn
+      manager.changeSubmitBtnState(false);
 
       this.aws_bucket.upload(params, function (err, data) {
         if (!err) {
@@ -392,13 +393,18 @@ var djpressor = function () {
 
         // Enable submit button when uploads are completed.
         // We don't care whether the upload was successful or failed.
-        manager.isUploadInProgress = false;
+        manager.canSubmitForm = true;
 
-        manager.$submit.removeAttr('disabled').val(manager.submitValue);
+        // Disable form submit btn
+        manager.changeSubmitBtnState(true);
       });
     },
 
-    // Uploads images to S3 destination before main form submit
+    /**
+     * Add hidden inputs for all image sizes to teh form for further processing by Django
+     * @param  {DOMEvent} e DOM event
+     * @return {undefined}
+     */
     formPreSubmit: function (e) {
 
       var manager = this;
@@ -406,17 +412,17 @@ var djpressor = function () {
       // Create hidden input fields for
       // each of the uploaded files so they get submitted
       // along with the form
-      if (manager.isUploadInProgress) {
+      if (!manager.canSubmitForm) {
 
-        // Disallow submitting the form when file upload is in progress
+        // Disallow submitting the form when image processing and upload is in progress
         e.preventDefault();
         return false;
       } else if (manager.uploaded.length > 0) {
 
-        manager.uploaded.forEach(function (tempImgUrl) {
+        for (var i = 0; i < manager.uploaded.length; i++) {
 
           // Remove '_temp' suffix from image file name in URL
-          var newImgUrl = tempImgUrl.replace(/_temp/g, ''),
+          var newImgUrl = manager.uploaded[i].replace(/_temp/g, ''),
             // Get image size name from file name
             // TODO get sizedata from S3 data
             sizeName = /[\w. ]+$/.exec(newImgUrl)[0].replace(/\.jpg/g, '');
@@ -427,8 +433,7 @@ var djpressor = function () {
             name: sizeName,
             value: newImgUrl,
           }).prependTo(manager.$form);
-
-        });
+        }
 
         // Remove file input so file doesn't get submitted to form, wasting memory
         // and set the value to the original.jpg file
@@ -442,6 +447,23 @@ var djpressor = function () {
         return true;
       }
 
+    },
+
+    /**
+     * Enables/disables form submit button state and
+     * updates the button text accordingly
+     * @param  {Bool} isEnabled Btn state
+     * @return {undefined}
+     */
+    changeSubmitBtnState: function (isEnabled) {
+
+      var $btn = this.$submit;
+
+      if (isEnabled) {
+        $btn.removeAttr('disabled').val(this.submitValue);
+      } else {
+        $btn.attr('disabled', 'true').val(TEXTS.UPLOADING);
+      }
     },
 
     // Binds events to dom elements
@@ -494,6 +516,9 @@ var djpressor = function () {
             // Save img base path for future use on form save
             manager.newImgUrl = destination;
 
+            // Disable form submit btn
+            manager.changeSubmitBtnState(false);
+
             Impressor(img, sizes, function (imgCollection) {
 
               // Upload original image first
@@ -516,6 +541,10 @@ var djpressor = function () {
                 );
               })
             });
+
+            // Disable form submit btn
+            manager.changeSubmitBtnState(true);
+
           }
 
           img.src = imgBase64;
