@@ -122,12 +122,6 @@ var djpressor = function () {
       this.submitValue = this.$submit.val() || 'Save';
 
       /**
-       * Flag that indicates whether the image upload is being processed
-       * @type {Boolean}
-       */
-      this.canSubmitForm = true;
-
-      /**
        * Collection of URL addresses to the uploaded image in different sizes
        * @type {Array}
        */
@@ -380,9 +374,6 @@ var djpressor = function () {
         ACL: 'public-read'
       };
 
-      // disable form submission until stuff get uploaded
-      manager.canSubmitForm = false;
-
       // Disable form submit btn
       manager.changeSubmitBtnState(false);
 
@@ -390,10 +381,6 @@ var djpressor = function () {
         if (!err) {
           manager.uploaded.push(data.Location);
         };
-
-        // Enable submit button when uploads are completed.
-        // We don't care whether the upload was successful or failed.
-        manager.canSubmitForm = true;
 
         // Disable form submit btn
         manager.changeSubmitBtnState(true);
@@ -405,19 +392,14 @@ var djpressor = function () {
      * @param  {DOMEvent} e DOM event
      * @return {undefined}
      */
-    formPreSubmit: function (e) {
+    formPreSubmit: function () {
 
       var manager = this;
 
       // Create hidden input fields for
       // each of the uploaded files so they get submitted
       // along with the form
-      if (!manager.canSubmitForm) {
-
-        // Disallow submitting the form when image processing and upload is in progress
-        e.preventDefault();
-        return false;
-      } else if (manager.uploaded.length > 0) {
+      if (manager.uploaded.length > 0) {
 
         for (var i = 0; i < manager.uploaded.length; i++) {
 
@@ -440,13 +422,9 @@ var djpressor = function () {
         var newFullsizeImgUrl = manager.uploaded[0].replace(/[\w. ]+$/, 'original.jpg');
 
         $(manager.$form.find(TEMPLATE_SELECTORS.INPUT)).val(newFullsizeImgUrl);
-
-        // Submit
-        return true;
-      } else {
-        return true;
       }
 
+      return true;
     },
 
     /**
@@ -499,6 +477,9 @@ var djpressor = function () {
 
         var reader = new FileReader();
 
+        // Disable form submit btn
+        manager.changeSubmitBtnState(false);
+
         reader.onload = function (readerEv) {
 
           var img = new Image(),
@@ -539,12 +520,11 @@ var djpressor = function () {
                   'image/jpeg',
                   obj_temp_file_name
                 );
-              })
+              });
+
+              // Disable form submit btn
+              manager.changeSubmitBtnState(true);
             });
-
-            // Disable form submit btn
-            manager.changeSubmitBtnState(true);
-
           }
 
           img.src = imgBase64;
