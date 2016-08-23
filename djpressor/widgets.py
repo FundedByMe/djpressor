@@ -8,7 +8,7 @@ class S3ImageUploadFormWidget(TextInput):
         super(S3ImageUploadFormWidget, self).__init__(*args, **kwargs)
         self.attrs['data-s3-enabled'] = 'enabled'
         style = self.attrs.get('style', '')
-        self.attrs['style'] = "display: none;" + style
+        self.attrs['style'] = "visibility: hidden;" + style
 
     class Media:
         js = (
