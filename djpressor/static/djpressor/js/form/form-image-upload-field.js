@@ -48,7 +48,7 @@ var djpressor = function () {
       UPLOAD: 'Upload',
       REMOVE: 'Remove',
       PREVIEW_ALT: 'Image preview',
-      UPLOADING: 'Uploading...',
+      UPLOADING: 'Processing...',
     };
 
   /**
@@ -379,7 +379,7 @@ var djpressor = function () {
 
       this.aws_bucket.upload(params, function (err, data) {
         if (!err) {
-          manager.uploaded.push(data.Location);
+          manager.uploaded.push(data);
         };
 
         // Disable form submit btn
@@ -401,27 +401,32 @@ var djpressor = function () {
       // along with the form
       if (manager.uploaded.length > 0) {
 
+        // Add input elements with type 'hidden' for postprocessing
+        // by djpresor Python code
         for (var i = 0; i < manager.uploaded.length; i++) {
 
-          // Remove '_temp' suffix from image file name in URL
-          var newImgUrl = manager.uploaded[i].replace(/_temp/g, ''),
-            // Get image size name from file name
-            // TODO get sizedata from S3 data
-            sizeName = /[\w. ]+$/.exec(newImgUrl)[0].replace(/\.jpg/g, '');
+          if (manager.uploaded[i].Location) {
+            // Get URL and size name for image file
+            var url = manager.uploaded[i].Location,
+              sizeName = /\w+(?=\.\w{2,4}$)/.exec(url)[0].replace(/\_temp/g, '');
 
-          // TODO Why?
-          $('<input />', {
-            type: 'hidden',
-            name: sizeName,
-            value: newImgUrl,
-          }).prependTo(manager.$form);
+            $('<input />', {
+              type: 'hidden',
+              name: sizeName,
+              value: url,
+            }).prependTo(manager.$form);
+          } else {
+            console.log('Djpressor: Unable to get the URLs to images from Amazon.');
+          }
         }
 
-        // Remove file input so file doesn't get submitted to form, wasting memory
-        // and set the value to the original.jpg file
-        var newFullsizeImgUrl = manager.uploaded[0].replace(/[\w. ]+$/, 'original.jpg');
+        if (manager.uploaded[0].Location) {
+          // Add URL address of the original image on Amazon S3.
+          // Needed for cases when no image has been assigned to the campaign yet.
+          var originalImgUrl = manager.uploaded[0].Location.replace(/[\w. ]+$/, 'original.jpg');
 
-        $(manager.$form.find(TEMPLATE_SELECTORS.INPUT)).val(newFullsizeImgUrl);
+          manager.$input.attr('value', originalImgUrl);
+        }
       }
 
       return true;
@@ -465,6 +470,9 @@ var djpressor = function () {
     // - Upload returned blobs from impressor to S3
     // - All uploaded files get an additional `_temp` to their filenames to avoid cornflakes
     newImageLoaded: function (ev) {
+      // Reset the list of uploaded images
+      this.uploaded = [];
+
       var manager = this,
         imageField = ev.target,
         imageFile = imageField.files[0],
