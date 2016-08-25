@@ -405,22 +405,28 @@ var djpressor = function () {
         // by djpresor Python code
         for (var i = 0; i < manager.uploaded.length; i++) {
 
-          // Get URL and size name for image file
-          var url = manager.uploaded[i].Location,
-            sizeName = /\w+(?=\.\w{2,4}$)/.exec(url)[0].replace(/\_temp/g, '');
+          if (manager.uploaded[i].Location) {
+            // Get URL and size name for image file
+            var url = manager.uploaded[i].Location,
+              sizeName = /\w+(?=\.\w{2,4}$)/.exec(url)[0].replace(/\_temp/g, '');
 
-          $('<input />', {
-            type: 'hidden',
-            name: sizeName,
-            value: url,
-          }).prependTo(manager.$form);
+            $('<input />', {
+              type: 'hidden',
+              name: sizeName,
+              value: url,
+            }).prependTo(manager.$form);
+          } else {
+            console.log('Djpressor: Unable to get the URLs to images from Amazon.');
+          }
         }
 
-        // Add URL address of the original image on Amazon S3.
-        // Needed for cases when no image ihas been assigned to the campaign yet.
-        var originalImgUrl = manager.uploaded[0].Location.replace(/[\w. ]+$/, 'original.jpg');
+        if (manager.uploaded[0].Location) {
+          // Add URL address of the original image on Amazon S3.
+          // Needed for cases when no image has been assigned to the campaign yet.
+          var originalImgUrl = manager.uploaded[0].Location.replace(/[\w. ]+$/, 'original.jpg');
 
-        manager.$input.attr('value', originalImgUrl);
+          manager.$input.attr('value', originalImgUrl);
+        }
       }
 
       return true;
