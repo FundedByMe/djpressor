@@ -45,7 +45,7 @@ class ImageDescriptor(object):
                 if not parsed.netloc or not parsed.path:
                     # if source field doesn't have a url in it
                     # we'll just return an empty ImageFileObject
-                    return self.imagefile
+                    return ImageFileObject()
 
                 # get original image filename
                 filename = parsed.path.split("/")[
