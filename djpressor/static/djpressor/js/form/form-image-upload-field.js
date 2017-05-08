@@ -409,6 +409,7 @@ var djpressor = function () {
             // Get URL and size name for image file
             var url = manager.uploaded[i].Location,
               sizeName = /\w+(?=\.\w{2,4}$)/.exec(url)[0].replace(/\_temp/g, '');
+              // sizeName = /\w+(?=\.\w{2,4}$)/.exec(url)[0];
 
             $('<input />', {
               type: 'hidden',
@@ -423,7 +424,7 @@ var djpressor = function () {
         if (manager.uploaded[0].Location) {
           // Add URL address of the original image on Amazon S3.
           // Needed for cases when no image has been assigned to the campaign yet.
-          var originalImgUrl = manager.uploaded[0].Location.replace(/[\w. ]+$/, 'original.jpg');
+          var originalImgUrl = manager.uploaded[0].Location;
 
           manager.$input.attr('value', originalImgUrl);
         }
@@ -508,7 +509,7 @@ var djpressor = function () {
             // Disable form submit btn
             manager.changeSubmitBtnState(false);
 
-            Impressor(img, sizes, function (imgCollection) {
+            // Impressor(img, sizes, function (imgCollection) {
 
               // Upload original image first
               var original_temp_file_name = destination + 'original_temp.jpg';
@@ -520,19 +521,19 @@ var djpressor = function () {
                 original_temp_file_name
               );
 
-              imgCollection.forEach(function (customSizeImg) {
-                // upload generated blobs
-                var obj_temp_file_name = destination + customSizeImg.name + '_temp.jpg';
-                manager.uploadToS3(
-                  customSizeImg.blob,
-                  'image/jpeg',
-                  obj_temp_file_name
-                );
-              });
-
-              // Disable form submit btn
-              manager.changeSubmitBtnState(true);
-            });
+            //   imgCollection.forEach(function (customSizeImg) {
+            //     // upload generated blobs
+            //     var obj_temp_file_name = destination + customSizeImg.name + '_temp.jpg';
+            //     manager.uploadToS3(
+            //       customSizeImg.blob,
+            //       'image/jpeg',
+            //       obj_temp_file_name
+            //     );
+            //   });
+            //
+            //   // Disable form submit btn
+            //   manager.changeSubmitBtnState(true);
+            // });
           }
 
           img.src = imgBase64;
