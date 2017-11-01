@@ -1,5 +1,6 @@
-from django.db.models.loading import get_model
 from django import template
+from django.apps import apps
+
 register = template.Library()
 
 
@@ -10,7 +11,7 @@ def guess_next_available_pk(model_name, app_name):
     Pass in model_name and app_name is necessary for django
     to get the model class and figure out table name.
     """
-    model_class = get_model(app_name.lower(), model_name.lower())
+    model_class = apps.get_model(app_name.lower(), model_name.lower())
     table_name = model_class._meta.db_table
 
     from django.db import connection
