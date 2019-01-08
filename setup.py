@@ -16,5 +16,5 @@ setup(
     url='https://github.com/fundedbyme/djpressor/',
     install_requires=[str(ir.req) for ir in install_reqs],
     data_files=[('requirements.txt', ['requirements.txt'])],
-    py_modules=['djpressor'],
+    
 )
