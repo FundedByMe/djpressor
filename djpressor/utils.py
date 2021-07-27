@@ -1,7 +1,7 @@
 import django
 import requests
 from django import forms
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 
 class ImageFileObject(object):
