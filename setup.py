@@ -7,4 +7,5 @@ setup(
     author_email='dev@fundedbyme.com',
     maintainer='FBM',
     url='https://github.com/fundedbyme/djpressor/',
+    packages=['djpressor',]
 )
